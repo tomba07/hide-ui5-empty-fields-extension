@@ -3,7 +3,7 @@
   "name": "Toggle Form Fields",
   "version": "1.0",
   "description": "Toggle visibility of form fields with the class 'sapUiFormCLElement'.",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "storage"],
   "background": {
     "service_worker": "background.js"
   },
