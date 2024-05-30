@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Remove Parent Element",
+  "version": "1.0",
+  "description": "Removes the first parent element with the class 'sapUiFormCLElement' of every DOM element with the class 'sapMEmptyIndicator'.",
+  "permissions": ["activeTab", "scripting"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["jquery.min.js"]
+    }
+  ]
+}
