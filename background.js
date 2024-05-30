@@ -1,18 +1,45 @@
-// Global variable to store the hidden state
+// Global variable to store the hidden state and observer
 let isHidden = false;
 
 chrome.action.onClicked.addListener((tab) => {
+  // Toggle the state
+  isHidden = !isHidden;
+
+  // Update the icon based on the new state
+  const newIcons = isHidden
+    ? {
+        16: "closed16.png",
+        32: "closed32.png",
+        48: "closed48.png",
+        128: "closed128.png"
+      }
+    : {
+        16: "open16.png",
+        32: "open32.png",
+        48: "open48.png",
+        128: "open128.png"
+      };
+  chrome.action.setIcon({ path: newIcons });
+
+  // Execute the content script with the new state
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     func: initElementToggler,
     args: [isHidden]
   });
-
-  // Toggle the state
-  isHidden = !isHidden;
 });
 
 function initElementToggler(currentlyHidden) {
+  if (typeof jQuery === "undefined") {
+    console.log("jQuery is not available.");
+    return;
+  }
+
+  // Disconnect the existing observer if any
+  if (window.hiddenElementsObserver) {
+    window.hiddenElementsObserver.disconnect();
+  }
+
   // CSS class to hide elements
   const css = `
     .hidden-sapUiFormCLElement {
@@ -43,6 +70,7 @@ function initElementToggler(currentlyHidden) {
   // MutationObserver to handle lazy-loaded elements
   const observer = new MutationObserver(() => {
     setVisibility(currentlyHidden);
+    console.log("Elements visibility set to", currentlyHidden ? "hidden" : "visible");
   });
 
   observer.observe(document.body, { childList: true, subtree: true });
