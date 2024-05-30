@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Remove Parent Element",
+  "name": "Toggle Form Fields",
   "version": "1.0",
-  "description": "Removes the first parent element with the class 'sapUiFormCLElement' of every DOM element with the class 'sapMEmptyIndicator'.",
+  "description": "Toggle visibility of form fields with the class 'sapUiFormCLElement'.",
   "permissions": ["activeTab", "scripting"],
   "background": {
     "service_worker": "background.js"

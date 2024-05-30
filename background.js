@@ -1,32 +1,54 @@
+// Global variable to store the hidden state
+let isHidden = false;
+
 chrome.action.onClicked.addListener((tab) => {
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    func: toggleElements
+    func: initElementToggler,
+    args: [isHidden]
   });
+
+  // Toggle the state
+  isHidden = !isHidden;
 });
 
-function toggleElements() {
+function initElementToggler(currentlyHidden) {
   // CSS class to hide elements
   const css = `
-      .hidden-sapUiFormCLElement {
-        display: none !important;
-      }
-    `;
+    .hidden-sapUiFormCLElement {
+      display: none !important;
+    }
+  `;
   const style = document.createElement("style");
   style.textContent = css;
   document.head.append(style);
 
-  // Function to toggle visibility
-  function toggleVisibility() {
+  // Function to set visibility of elements
+  function setVisibility(hidden) {
     $(".sapMEmptyIndicator").each(function () {
       let parentElement = $(this).closest(".sapUiFormCLElement").first();
       if (parentElement.length > 0) {
-        parentElement.toggleClass("hidden-sapUiFormCLElement");
+        if (hidden) {
+          parentElement.addClass("hidden-sapUiFormCLElement");
+        } else {
+          parentElement.removeClass("hidden-sapUiFormCLElement");
+        }
       }
     });
-    console.log("Toggled visibility of elements");
   }
 
-  // Execute the toggle function
-  toggleVisibility();
+  // Set initial visibility based on the stored state
+  setVisibility(currentlyHidden);
+
+  // MutationObserver to handle lazy-loaded elements
+  const observer = new MutationObserver(() => {
+    setVisibility(currentlyHidden);
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Store observer reference for potential future use
+  window.hiddenElementsObserver = observer;
+
+  console.log("MutationObserver initialized and elements visibility set to", currentlyHidden ? "hidden" : "visible");
 }
